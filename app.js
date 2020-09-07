@@ -12,8 +12,8 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use('/', router)
 
-const privateKey = fs.readFileSync('./https/ebook.ourclubs.cn.key')
-const pem = fs.readFileSync('./https/ebook.ourclubs.cn.pem')
+const privateKey = fs.readFileSync('../https/ebook.ourclubs.cn.key')
+const pem = fs.readFileSync('../https/ebook.ourclubs.cn.pem')
 const credentials = {
   key: privateKey,
   cert: pem
