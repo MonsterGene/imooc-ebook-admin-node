@@ -1,5 +1,6 @@
 const { MIME_TYPE_EPUB, UPLOAD_URL, UPLOAD_PATH } = require('../utils/constant')
 const fs = require('fs')
+const path = require('path')
 const Epub = require('../utils/epub')
 const xml2js = require('xml2js').parseString
 
@@ -41,6 +42,7 @@ class Book {
     this.author = ''
     this.publisher = ''
     this.contents = []
+    this.contentsTree = []
     this.cover = ''
     this.coverPath = ''
     this.category = -1
@@ -96,13 +98,15 @@ class Book {
                   const coverUrl = `${UPLOAD_URL}/img/${this.fileName}.${suffix}`
                   fs.writeFileSync(coverPath, file, 'binary')
                   this.coverPath = `/img/${this.fileName}.${suffix}`
+                  this.cover = coverUrl
                   resolve(this)
                 }
               }
               try {
                 this.unzip()
-                this.parseContents(epub).then(({ chapters }) => {
+                this.parseContents(epub).then(({ chapters, chapterTree }) => {
                   this.contents = chapters
+                  this.contentsTree = chapterTree
                   epub.getImage(cover, handleGetImage)
                 })
               } catch (e) {
@@ -161,6 +165,7 @@ class Book {
     if (fs.existsSync(ncxFilePath)) {
       return new Promise((resolve, reject) => {
         const xml = fs.readFileSync(ncxFilePath, 'utf-8')
+        const dir = path.dirname(ncxFilePath).replace(UPLOAD_PATH, '')
         const fileName = this.fileName
         xml2js(xml, {
           explicitArray: false,
@@ -174,28 +179,27 @@ class Book {
               navMap.navPoint = findParent(navMap.navPoint)
               const newNavMap = flatten(navMap.navPoint)
               const chapters = []
-              epub.flow.forEach((chapter, index) => {
-                if (index + 1 > newNavMap.length) {
-                  return
-                }
-                const nav = newNavMap[index]
-                chapter.text = `${UPLOAD_URL}/unzip/${fileName}/${chapter.href}`
-                if (nav && nav.navLabel) {
-                  chapter.label = nav.navLabel.text || ''
-                } else {
-                  chapter.label = ''
-                }
-                chapter.level = nav.level
-                chapter.pid = nav.pid
-                chapter.navId = nav['$'].id
+              newNavMap.forEach((chapter, index) => {
+                const src = chapter.content['$'].src
+                chapter.text = `${UPLOAD_URL}${dir}/${src}`
+                chapter.label = chapter.navLabel.text || ''
+                chapter.navId = chapter['$'].id
                 chapter.fileName = fileName
                 chapter.order = index + 1
                 chapters.push(chapter)
               })
-              resolve({ chapters })
+              const chapterTree = []
+              chapters.forEach(c => {
+                c.children = []
+                if (c.pid === '') {
+                  chapterTree.push(c)
+                } else {
+                  const parent = chapters.find(_ => _.navId === c.pid)
+                  parent.children.push(c)
+                }
+              })
+              resolve({ chapters, chapterTree })
             } else {
-              console.log('--------------------------')
-              console.log('navPoint: ', navMap.navPoint)
               reject(new Error('目录解析失败，目录树为空'))
             }
           }

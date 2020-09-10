@@ -1,6 +1,6 @@
 const { env } = require('./env')
 const UPLOAD_PATH = env === 'dev' ? 'D:\\StudySpace\\NginxWWW\\imooc-ebook-admin\\upload' : ''
-const UPLOAD_URL = 'https://ebook.ourclubs.cn:8189'
+const UPLOAD_URL = 'http://ebook.ourclubs.cn:8189'
 
 module.exports = {
   CODE_TOKEN_EXPIRED: -2,
