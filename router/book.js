@@ -2,11 +2,11 @@ const express = require('express')
 const multer = require('multer')
 const Result = require('../models/Result')
 const Book = require('../models/Book')
+const { decodeToken } = require('../utils')
 
-const { PWD_SALT, PRIVATE_KEY, JWT_EXPIRED, UPLOAD_PATH } = require('../utils/constant')
-const { body, validationResult } = require('express-validator')
 const boom = require('boom')
-const jwt = require('jsonwebtoken')
+const { UPLOAD_PATH } = require('../utils/constant')
+const bookService = require('../service/book')
 
 const router = express.Router()
 
@@ -23,6 +23,19 @@ router.post('/upload', multer({ dest: `${UPLOAD_PATH}/book` }).single('file'), f
       next(boom.badImplementation(err))
     })
   }
+})
+
+router.post('/create', function (req, res, next) {
+  const decodedToken = decodeToken(req)
+  if (decodedToken && decodedToken.username) {
+    req.body.username = decodedToken.username
+  }
+  const book = new Book(null, req.body)
+  bookService.insertBook(book).then(() => {
+    new Result(null, '添加电子书成功').success(res)
+  }).catch(err => {
+    next(boom.badImplementation(err))
+  })
 })
 
 module.exports = router

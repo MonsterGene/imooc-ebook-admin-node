@@ -54,6 +54,26 @@ class Book {
   }
   createBookFromData(data) {
     // console.log(data)
+    this.fileName = data.fileName
+    this.cover = data.coverPath
+    this.title = data.title
+    this.author = data.author
+    this.publisher = data.publisher
+    this.bookId = data.fileName
+    this.language = data.language
+    this.rootFile = data.rootFile
+    this.originalName = data.originalName
+    this.path = data.path || data.filePath
+    this.filePath = data.path || data.filePath
+    this.coverPath = data.coverPath
+    this.unzipPath = data.unzipPath
+    this.createUser = data.username
+    this.createDt = new Date().getTime()
+    this.updateDt = new Date().getTime()
+    this.updateType = data.updateType === 0 ? data.updateType : 1
+    this.category = data.category || 99
+    this.categoryText = data.categoryText || '自定义'
+    this.contents = data.contents || []
   }
 
   parse() {
@@ -170,7 +190,7 @@ class Book {
         xml2js(xml, {
           explicitArray: false,
           ignoreAttrs: false
-        }, function (err, json) {
+        }, (err, json) => {
           if (err) {
             reject(err)
           } else {
@@ -181,6 +201,8 @@ class Book {
               const chapters = []
               newNavMap.forEach((chapter, index) => {
                 const src = chapter.content['$'].src
+                chapter.id = `${src}`
+                chapter.href = `${dir}/${src}`.replace(this.unzipPath, '')
                 chapter.text = `${UPLOAD_URL}${dir}/${src}`
                 chapter.label = chapter.navLabel.text || ''
                 chapter.navId = chapter['$'].id
@@ -215,6 +237,33 @@ class Book {
       path = `/${path}`
     }
     return `${UPLOAD_PATH}${path}`
+  }
+
+  toDb () {
+    return {
+      fileName: this.fileName,
+      cover: this.coverPath,
+      title: this.title,
+      author: this.author,
+      publisher: this.publisher,
+      bookId: this.fileName,
+      language: this.language,
+      rootFile: this.rootFile,
+      originalName: this.originalName,
+      filePath: this.filePath,
+      coverPath: this.coverPath,
+      unzipPath: this.unzipPath,
+      createUser: this.createUser,
+      createDt: this.createDt,
+      updateDt: this.updateDt,
+      updateType: this.updateType,
+      category: this.category,
+      categoryText: this.categoryText
+    }
+  }
+
+  getContents () {
+    return this.contents
   }
 }
 
