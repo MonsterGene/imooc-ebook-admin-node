@@ -3,11 +3,21 @@ const db = require('../db')
 const _ = require('lodash')
 
 function exists (book) {
-
+  const { title, author, publisher } = book
+  const sql = `select * from book where title='${title}' and author='${author}' and publisher='${publisher}'`
+  return db.queryOne(sql)
 }
 
-function removeBook (book) {
-
+async function removeBook (book) {
+  if (book) {
+    book.reset()
+    if (book.fileName) {
+      const removeBookSql = `delete from book where fileName='${book.fileName}'`
+      const removeContentsSql = `delete from contents where fileName='${book.fileName}'`
+      await db.querySql(removeBookSql)
+      await db.querySql(removeContentsSql)
+    }
+  }
 }
 
 async function insertContents (book) {
@@ -52,6 +62,19 @@ function insertBook (book) {
   })
 }
 
+async function getBook(fileName) {
+  const bookSql = `select * from book where fileName='${fileName}'`
+  const contentsSql = `select * from contents where fileName='${fileName}' order by \`order\``
+  console.log(contentsSql)
+  const book = await db.queryOne(bookSql)
+  const contents = await db.querySql(contentsSql)
+  return {
+    book,
+    contents
+  }
+}
+
 module.exports = {
-  insertBook
+  insertBook,
+  getBook
 }
