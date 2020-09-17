@@ -1,5 +1,6 @@
 const { env } = require('./env')
 const UPLOAD_PATH = env === 'dev' ? 'D:\\StudySpace\\NginxWWW\\imooc-ebook-admin\\upload' : ''
+const OLD_UPLOAD_URL = 'http://ebook.ourclubs.cn:8189/book/res/img'
 const UPLOAD_URL = 'http://ebook.ourclubs.cn:8189'
 
 module.exports = {
@@ -12,5 +13,6 @@ module.exports = {
   JWT_EXPIRED: 60 * 60,
   UPLOAD_PATH,
   MIME_TYPE_EPUB: 'application/epub+zip',
+  OLD_UPLOAD_URL,
   UPLOAD_URL
 }

@@ -68,6 +68,10 @@ async function getBook(fileName) {
   console.log(contentsSql)
   const book = await db.queryOne(bookSql)
   const contents = await db.querySql(contentsSql)
+  if (book) {
+    book.cover = Book.genCoverUrl(book)
+    book.contentsTree = Book.genContentsTree(contents)
+  }
   return {
     book,
     contents
