@@ -38,6 +38,19 @@ router.post('/create', function (req, res, next) {
   })
 })
 
+router.post('/update', function (req, res, next) {
+  const decodedToken = decodeToken(req)
+  if (decodedToken && decodedToken.username) {
+    req.body.username = decodedToken.username
+  }
+  const book = new Book(null, req.body)
+  bookService.updateBook(book).then(() => {
+    new Result(null, '更新电子书成功').success(res)
+  }).catch(err => {
+    next(boom.badImplementation(err))
+  })
+})
+
 router.get('/get', function (req, res, next) {
   const { fileName } = req.query
   if (!fileName) {

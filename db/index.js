@@ -89,8 +89,13 @@ function insert (model, tableName) {
   })
 }
 
+function update (model, tableName, where) {
+
+}
+
 module.exports = {
   querySql,
   queryOne,
-  insert
+  insert,
+  update
 }
