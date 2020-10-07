@@ -1,6 +1,7 @@
 const Book = require("../models/Book")
 const db = require('../db')
 const _ = require('lodash')
+const log = require("../utils/log")
 
 function exists (book) {
   const { title, author, publisher } = book
@@ -70,7 +71,7 @@ function updateBook (book) {
         const result = await getBook(book.fileName)
         if (result) {
           const model = book.toDb()
-          console.log(model)
+          log(model)
           if (+result.updateType === 0) {
             reject(new Error('内置图书不能编辑'))
           } else {
@@ -90,7 +91,7 @@ function updateBook (book) {
 async function getBook(fileName) {
   const bookSql = `select * from book where fileName='${fileName}'`
   const contentsSql = `select * from contents where fileName='${fileName}' order by \`order\``
-  console.log(contentsSql)
+  log(contentsSql)
   const book = await db.queryOne(bookSql)
   const contents = await db.querySql(contentsSql)
   if (book) {
