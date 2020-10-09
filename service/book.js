@@ -103,8 +103,81 @@ async function getBook(fileName) {
   }
 }
 
+async function getCategory() {
+  const sql = 'select * from category order by category asc'
+  const result = await db.querySql(sql)
+  const categoryList = []
+  result.forEach(item => {
+    categoryList.push({
+      label: item.categoryText,
+      value: item.category,
+      num: item.num
+    })
+  });
+  return categoryList
+}
+
+async function listBook(query) {
+  log(query)
+  const { category, author, title, sort, page = 1, pageSize = 20 } = query
+  const offset = (page - 1) * pageSize
+  let bookSql = 'select * from book'
+  let where = 'where'
+  title && (where = db.andLike(where, 'title', title))
+  author && (where = db.andLike(where, 'author', author))
+  category && (where = db.and(where, 'category', category))
+  if (where !== 'where') {
+    bookSql = `${bookSql} ${where}`
+  }
+  if (sort) {
+    const symbol = sort[0]
+    const column = sort.slice(1, sort.length)
+    const order = symbol === '+' ? 'asc' : 'desc'
+    bookSql = `${bookSql} order by \`${column}\` ${order}`
+  }
+  let countSql = `select count(*) as count from book`
+  if (where !== 'where') {
+    countSql = `${countSql} ${where}`
+  }
+  const count = await db.querySql(countSql)
+  bookSql = `${bookSql} limit ${pageSize} offset ${offset}`
+  log(bookSql)
+  const list = await db.querySql(bookSql)
+  list.forEach(book => book.cover = Book.genCoverUrl(book))
+  return {
+    list,
+    count: count[0].count,
+    page: +page,
+    pageSize: +pageSize
+  }
+}
+
+function deleteBook (fileName) {
+  return new Promise(async (resolve, reject) => {
+    let book = await getBook(fileName)
+    if (book) {
+      if (+book.updateType === 0) {
+        reject(new Error('内置电子书不能删除'))
+      } else {
+        const bookObj = new Book(null, book)
+        const sql = `delete from book where fileName='${fileName}'`
+        db.querySql(sql).then(() => {
+          bookObj.reset()
+          resolve()
+        })
+      }
+    } else {
+      reject(new Error('电子书不存在'))
+    }
+    resolve()
+  })
+}
+
 module.exports = {
   insertBook,
   updateBook,
-  getBook
+  getBook,
+  getCategory,
+  listBook,
+  deleteBook
 }
