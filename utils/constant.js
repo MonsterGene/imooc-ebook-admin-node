@@ -1,5 +1,5 @@
 const { env } = require('./env')
-const UPLOAD_PATH = env === 'dev' ? 'D:\\StudySpace\\NginxWWW\\imooc-ebook-admin\\upload' : ''
+const UPLOAD_PATH = env === 'dev' ? 'D:\\StudySpace\\NginxWWW\\imooc-ebook-admin\\upload' : '/root/nginx/www/ebook-admin-upload'
 const OLD_UPLOAD_URL = 'http://ebook.ourclubs.cn:8189/book/res/img'
 const UPLOAD_URL = 'http://ebook.ourclubs.cn:8189'
 
