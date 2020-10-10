@@ -31,10 +31,13 @@ router.post('/login', [
         )
         new Result({ token }, '登录成功').success(res)
       }
+    }).catch(err => {
+      console.log(err)
+      next(boom.badImplementation(err))
     })
   }
 })
-router.get('/info', function (req, res,) {
+router.get('/info', function (req, res, next) {
   const jwtInfo = decodeToken(req)
   if (jwtInfo && jwtInfo.username) {
     findUser(jwtInfo.username).then(user => {
@@ -44,6 +47,8 @@ router.get('/info', function (req, res,) {
       } else {
         new Result('用户信息查询失败').fail(res)
       }
+    }).catch(err => {
+      next(boom.badImplementation(err))
     })
 
   }
