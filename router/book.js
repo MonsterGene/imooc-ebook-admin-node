@@ -15,7 +15,7 @@ router.post('/upload', multer({ dest: `${UPLOAD_PATH}/book` }).single('file'), f
     new Result('上传电子书失败').fail(res)
   } else {
     const book = new Book(req.file)
-    console.log(book)
+    // console.log(book)
     book.parse().then(book => {
       new Result(book, '上传电子书成功').success(res)
     }).catch(err => {
