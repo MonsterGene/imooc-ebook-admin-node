@@ -5,6 +5,8 @@ const router = require('./router')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 
+const { env } = require('./utils/env')
+
 const app = express()
 
 app.use(cors())
@@ -22,7 +24,7 @@ app.use('/', router)
 
 const server = app.listen(5000, function () {
   const { address, port } = server.address()
-  console.log('Http启动成功： http://%s:%s', address, port)
+  console.log('Http以%s模式启动成功： http://%s:%s', env, address, port)
 })
 // httpsServer.listen(18082, function () {
 //   console.log('Https启动成功： http://localhost:%s', 18082)
