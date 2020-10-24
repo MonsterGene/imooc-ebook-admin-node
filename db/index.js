@@ -4,7 +4,7 @@ const log = require('../utils/log')
 const { isObject } = require('../utils')
 
 function connect () {
-  console.log(config)
+  // console.log(config)
   return mysql.createConnection({
     host: config.host,
     user: config.user,
