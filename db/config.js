@@ -6,7 +6,7 @@ if (env === 'dev') {
   host = 'localhost'
   user = 'root'
   password = 'root'
-  database = 'imooc_ebook'
+  database = 'ebook'
 } else if (env === 'prod') {
   const prodConf = require('../../ebook_production_config.js')
   host = prodConf.dbHost
