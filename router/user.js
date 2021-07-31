@@ -5,8 +5,8 @@ const moment = require('moment')
 const { aliSMSApiCode } = require('../../ebook_production_config');
 const Result = require('../models/Result')
 const { login, findUser } = require('../service/user')
-const { decodeToken, getClientIp } = require('../utils')
-const { PRIVATE_KEY, JWT_EXPIRED } = require('../utils/constant')
+const { decodeToken, getClientIp, md5 } = require('../utils')
+const { PWD_SALT, PRIVATE_KEY, JWT_EXPIRED } = require('../utils/constant')
 const { body, validationResult } = require('express-validator')
 const boom = require('boom')
 const jwt = require('jsonwebtoken')
@@ -20,17 +20,17 @@ const router = express.Router()
  */
 router.post('/login', [
   body('username').isString().withMessage('用户名必须为字符串'),
-  // body('password').isString().withMessage('密码必须为字符串'),
-  body('validCode').isString().withMessage('验证码必须为字符串')
+  body('loginType').isString().withMessage('登录类型必须为字符串'),
+  body('password').isString().withMessage('密码或验证码必须为字符串')
 ], function (req, res, next) {
   const err = validationResult(req)
   if (!err.isEmpty()) {
     const [{ msg }] = err.errors
     next(boom.badRequest(msg))
   } else {
-    const { username, validCode } = req.body
+    const { username, password, loginType } = req.body
     let ip = getClientIp(req)
-    login(username, validCode, ip).then(valid => {
+    login(username, loginType, password, ip).then(valid => {
       if (!valid || valid.length === 0) {
         new Result('登录失败').fail(res)
       } else {
