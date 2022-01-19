@@ -25,6 +25,7 @@ app.use('/', router)
 const server = app.listen(5000, function () {
   const { address, port } = server.address()
   console.log('Http以%s模式启动成功： http://%s:%s', env, address, port)
+  console.log('Http started as %s mode： http://%s:%s', env, address, port)
 })
 // httpsServer.listen(18082, function () {
 //   console.log('Https启动成功： http://localhost:%s', 18082)
