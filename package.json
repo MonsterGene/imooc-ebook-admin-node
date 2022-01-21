@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon app env=dev",
-    "prod": "node app.js env=prod &",
+    "dev": "cross-env NODE_ENV=development nodemon app",
+    "prod": "cross-env NODE_ENV=production node app.js env=prod &",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -27,6 +27,7 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "nodemon": "^2.0.4"
   }
 }
