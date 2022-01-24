@@ -9,7 +9,7 @@ const app = express()
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json({ limit: '20mb' }))
+app.use(bodyParser.json({ limit: '50mb' }))
 app.use('/', router)
 
 // const privateKey = fs.readFileSync('../https/ebook.ourclubs.cn.key')
