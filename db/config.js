@@ -1,5 +1,3 @@
-const { env } = require('../utils/env')
-
 const config = require(`../../ebook_${process.env.NODE_ENV}_config.js`)
 host = config.dbHost
 user = config.dbUser
