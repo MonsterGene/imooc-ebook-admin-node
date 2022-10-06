@@ -156,6 +156,7 @@ function deleteBook (fileName) {
   return new Promise(async (resolve, reject) => {
     let book = await getBook(fileName)
     if (book) {
+      log(book)
       if (+book.updateType === 0) {
         reject(new Error('内置电子书不能删除'))
       } else {

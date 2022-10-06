@@ -6,7 +6,7 @@ const UPLOAD_PATH = isDev
 const OLD_UPLOAD_URL = 'http://ebook.ourclubs.cn:8189/book/res/img'
 const UPLOAD_URL = isDev
   ? 'http://ebook.ourclubs.cn:8189'
-  : 'https://ebook.ourclubs.cn/res/ebook-admin-upload'
+  : 'https://ebook.ourclubs.cn/res/ebook-upload'
 
 module.exports = {
   CODE_TOKEN_EXPIRED: -2,
