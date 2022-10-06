@@ -154,13 +154,13 @@ async function listBook(query) {
 
 function deleteBook (fileName) {
   return new Promise(async (resolve, reject) => {
-    let book = await getBook(fileName)
+    const { book, contents } = await getBook(fileName)
     if (book) {
       log(book)
       if (+book.updateType === 0) {
         reject(new Error('内置电子书不能删除'))
       } else {
-        const bookObj = new Book(null, book)
+        const bookObj = new Book(null, { ...book, contents })
         const sql = `delete from book where fileName='${fileName}'`
         db.querySql(sql).then(() => {
           bookObj.reset()
